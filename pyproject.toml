@@ -1,0 +1,17 @@
+[project]
+name = "checkr-agents"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.118.0",
+    "litellm>=1.77.5",
+    "nlip-sdk",
+    "oroboro",
+    "uvicorn>=0.37.0",
+]
+
+[tool.uv.sources]
+nlip-sdk = { path = "../nlip_sdk" }
+oroboro = { path = "../Oroboro", editable = true }
