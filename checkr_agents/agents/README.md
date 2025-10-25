@@ -4,6 +4,9 @@
 
 classDiagram
     class CheckrAgent {
+	  - list messages
+	  - list tools
+
 	  - process_query(q)
 	}
 	
@@ -19,6 +22,7 @@ classDiagram
 	}
 
 	class RagNlipAgent {
+	  - milvus_context_manager
 	}
 	
 	CheckrAgent <|-- NlipAgent : inheritance
