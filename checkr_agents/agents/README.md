@@ -3,34 +3,43 @@
 ``` mermaid
 
 classDiagram
+direction TB
     class CheckrAgent {
-	  - messages[]
-	  - tools[]
+	    - messages[]
+	    - tools[]
+	    - process_query(q)
+    }
 
-	  - process_query(q)
-	}
-	
-	class NlipAgent {
-	  + NLIP_PROMPT
-	}
+    class NlipAgent {
+	    + NLIP_PROMPT
+    }
 
-	class WeatherNlipAgent {
-	  - tools = [ make_nws_request, format_alert ]
-	}
+    class WeatherNlipAgent {
+	    + WEATHER_PROMPT
+	    - tool: make_nws_request()
+	    - tool: format_alert()
+    }
 
-	class CoordinatorNlipAgent {
-	  + NLIP_COORDINATOR_PROMPT
+    class CoordinatorNlipAgent {
+	    + NLIP_COORDINATOR_PROMPT
+	    - tool: connect_to_server(url)
+	    - tool: send_to_server(url, msg)
+    }
 
-	  - connect_to_server(url)
-	  - send_to_server(url, msg)
-	}
+    class RagNlipAgent {
+	    + RAG_PROMPT
+	    - milvus_context_manager
+	    - process_query(q)
+    }
 
-	class RagNlipAgent {
-	  - milvus_context_manager
-	}
-	
-	CheckrAgent <|-- NlipAgent : inheritance
-	NlipAgent <|-- WeatherNlipAgent : inheritance
-	NlipAgent <|-- CoordinatorNlipAgent : inheritance
-	NlipAgent <|-- RagNlipAgent : inheritance
+    class MilvusContextManager {
+	    - milvus_website.db
+    }
+
+    CheckrAgent <|-- NlipAgent : inheritance
+    NlipAgent <|-- WeatherNlipAgent : inheritance
+    NlipAgent <|-- CoordinatorNlipAgent : inheritance
+    NlipAgent <|-- RagNlipAgent : inheritance
+    MilvusContextManager <.. RagNlipAgent
+
 ```
