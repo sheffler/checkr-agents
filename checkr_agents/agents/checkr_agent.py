@@ -142,7 +142,7 @@ class CheckrAgent:
     # Load an assertion
     #
     def load_spec(self, modspec:str):
-        print(f"LOADING THE ASSERTION")
+        logger.info(f"LOADING THE ASSERTION {modspec}")
         self.checkr.load_spec(modspec)
 
     #
@@ -237,7 +237,8 @@ class CheckrAgent:
     def _handle_response(self, response_message):
 
         # to be shown to the user at the end of this turn
-        self.final_text.append(response_message.content)
+        if response_message.content is not None:
+            self.final_text.append(response_message.content)
 
         tool_calls = response_message.tool_calls
 
@@ -278,6 +279,11 @@ class CheckrAgent:
         )
 
         response_message = response.choices[0].message
+
+        if response_message is None:
+            import sys
+            print(f"RESPONSE:{response_message}")
+            sys.exit(1)
 
         # Save the response
         self._handle_response(response_message)

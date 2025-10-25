@@ -16,8 +16,21 @@ import importlib
 from checkr_agents import logger # get the logger
 
 class Checkr:
+
+    # Make this a singleton in a multi-agent system
+    _instance = None
     
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+             # create new instance if none exists
+            cls._instance = super().__new__(cls)
+        return cls._instance
+
     def __init__(self):
+
+        # initialize only if is the first time
+        if hasattr(self, 'oro'):
+            return
 
         # globals for use in eval
         self.globs = { }
@@ -27,6 +40,9 @@ class Checkr:
 
         # list of strings: exprs to evaluate
         self.exprs = [ ]
+
+        # dict of defined events to memoize them
+        self.event_dict = { }
 
         # oroboro operators to be populated in an assertion module
         self.globs['Event'] = Event
@@ -95,12 +111,23 @@ class Checkr:
     # Define an event and place it in the list of symbols so that it is present in the Assertion module.
     # Return it so it can also be called from the Agent context.
     #
+    # Events are memoized so that in a shared environment the re-definition of an event with a given
+    # name returns the same event.
+    #
     def define_observer_event(self, name):
 
         logger.debug(f"DEFINE OBSERVER: {name}")
 
+        evt = self.event_dict.get(name, None)
+
+        if evt != None:
+            return evt
+
         evt = ObserverEvent(nicename=name)
         self.define_symbol(name, evt)
+
+        # memoize
+        self.event_dict[name] = evt
 
         return evt
 
