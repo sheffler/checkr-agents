@@ -2,18 +2,9 @@
 # An assertion that watches the default events
 #
 
-import logging
+from checkr_agents import assertion_logger
 
-logger = logging.getLogger("assertion1")
-logger.setLevel(logging.DEBUG)
-
-file_handler = logging.FileHandler('assertion1.log')
-file_handler.setLevel(logging.DEBUG)
-
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-file_handler.setFormatter(formatter)
-
-logger.addHandler(file_handler)
+logger = assertion_logger("assertion1")
 
 def watch_on_add_tool():
     while True:
