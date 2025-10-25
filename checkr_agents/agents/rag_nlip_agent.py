@@ -1,6 +1,6 @@
 #
-# A Weather Agent has tools for querying about weather conditions and alerts.
-# An additional system instruction helps refine its behavior.
+# A RAG Agent has tools for querying about a scraped website stored in a Milvus Database.
+#
 
 import logging
 import asyncio
