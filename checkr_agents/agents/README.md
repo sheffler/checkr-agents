@@ -2,7 +2,7 @@
 
 ``` mermaid
 
-class Diagram
+classDiagram
     class CheckrAgent {
 	}
 	
