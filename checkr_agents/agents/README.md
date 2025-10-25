@@ -11,12 +11,15 @@ classDiagram
 	}
 	
 	class NlipAgent {
+	  + NLIP_PROMPT
 	}
 
 	class WeatherNlipAgent {
 	}
 
 	class CoordinatorNlipAgent {
+	  + NLIP_COORDINATOR_PROMPT
+
 	  - connect_to_server(url)
 	  - send_to_server(url, msg)
 	}
