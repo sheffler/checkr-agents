@@ -15,6 +15,7 @@ classDiagram
 	}
 
 	class WeatherNlipAgent {
+	  - tools = [ make_nws_request, format_alert ]
 	}
 
 	class CoordinatorNlipAgent {
