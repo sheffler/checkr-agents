@@ -4,6 +4,7 @@
 
 classDiagram
     class CheckrAgent {
+	  - process_query(q)
 	}
 	
 	class NlipAgent {
@@ -13,6 +14,8 @@ classDiagram
 	}
 
 	class CoordinatorNlipAgent {
+	  - connect_to_server(url)
+	  - send_to_server(url, msg)
 	}
 
 	class RagNlipAgent {
