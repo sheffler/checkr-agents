@@ -4,8 +4,8 @@
 
 classDiagram
     class CheckrAgent {
-	  - list messages
-	  - list tools
+	  - messages[]
+	  - tools[]
 
 	  - process_query(q)
 	}
