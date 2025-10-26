@@ -1,7 +1,9 @@
 # Checkr Agent System
 
 An Agent Server, as defined in this project, is a FastAPI application server with an NLIP endpoint at a standard URL.
-By definition, all NLIP agent servers expose an `/nlip` endpoint, but individual servers can be run at different addresses.  An Agent Server address can be a network address, a unix pipe name or a named in-memory channel.
+By definition, all NLIP agent servers expose an `/nlip` endpoint, but individual servers can be run at different addresses.  
+
+In this project, an Agent Server address can be a network address, a unix pipe name or a named in-memory channel.
 
 Agent servers can be run as individual processes or can be combined into a multi-agent "system" that is run in a single process.  Such a multi-agent system is described by a "Mount Specification" which lists the collection of agent servers and their addresses.
 
