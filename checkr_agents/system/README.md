@@ -18,7 +18,7 @@ agent_server3 = ...
 mount_spec = [
   (agent_server1, "http://localhost:8024")
   (agent_server2, "unix://pipename")
-  (agent_server1, "mem://channelname")
+  (agent_server3, "mem://channelname")
 ]
 
 ```
