@@ -33,7 +33,7 @@ Mach2 also understands the Unix Domain Socket convention of Agent Servers so tha
 
 In-Memory addresses are slightly different: they exist only within the Unix process of the running servers.  This feature becomes very useful for inter-agent communication using HTTP clients.  For example, in the `CoordinatorNlipAgent` if you type:
 
->> **Can you please connect to mem://channelname/.**
+> **Can you please connect to mem://channelname/.**
 
 the Coordinator NLIP Agent will use its HTTP client to open a connection to the Agent at the in-memory channel with name "channelname".  Then that second agent will be available for use by the front-end the coordinator agent.
 
