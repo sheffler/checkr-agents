@@ -27,7 +27,7 @@ mount_spec = [
 - The second line mounts "agent_server2" at the Unix Socket Domain named "pipename".  By convention, Agent Server unix sockets are mounted at "/tmp/agent-{pipename}.sock".
 - The third line mounts "agent_server3" with the in-memory pipe name "channelname."
 
-The nice thing about the mount names is that they are used consistently across the NLIP Agent Servers in this project.  For example, if using the Mach2 NLIP chat agent, you can connect directly to "http://localhost:8024" to interact with it.
+The nice thing about the mount names is that they are used consistently across the NLIP Agent Servers in this project.  For example, if using the Mach2 NLIP chat agent, you can connect directly to "http://localhost:8024" to interact with `agent_server1`.
 
 Mach2 also understands the Unix Domain Socket convention of Agent Servers so that if you type "unix://pipename" into the address bar of Mach2, it will find the Unix Domain Socket "/tmp/agent-{pipename}.sock" and open a session there.
 
