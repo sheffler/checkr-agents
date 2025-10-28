@@ -7,7 +7,7 @@ vector store insertion from that project in the context of this project.
 - https://github.com/The-AI-Alliance/allycat
 
 The AllyCat project uses [llama\_index](https://github.com/run-llama/llama_index) to generate the vector database.  Here, in the interest of
-paring the code down to its essentials, we incorporate the Milvus database directory.  To do so, 
+paring the code down to its essentials, we incorporate the Milvus database directly.  To do so, 
 it is necessary to understand the database fields and node (File Object) used by llama\_index.
 
 This is a long way of saying that this is not a general Milvus database context generator, but one 
