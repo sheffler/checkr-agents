@@ -18,17 +18,6 @@ from urllib.parse import urlparse
 
 from pydantic import AnyHttpUrl
 
-################################################################
-from typing import Annotated
-from pydantic import BaseModel, AfterValidator, Field
-
-
-# Option 1: Using Annotated with json_schema_extra
-MyURI = Annotated[
-    str,
-    Field(json_schema_extra={'format': 'uri'})
-]
-
 # map host->session
 sessions = { }
 
@@ -38,16 +27,15 @@ logger = logging.getLogger("NLIP")
 # MODEL = 'llama3.2:latest'
 # MODEL = 'ollama_chat/llama3.2:latest'
 # MODEL = 'ollama_chat/llama3-groq-tool-use:
-# MODEL = "anthropic/claude-3-7-sonnet-20250219"
-MODEL = "cerebras/llama-4-scout-17b-16e-instruct"
+MODEL = "anthropic/claude-3-7-sonnet-20250219"
+# MODEL = "cerebras/llama-4-scout-17b-16e-instruct"
 
 
 #
 # Make a connection and return a status string
 #
     
-# async def connect_to_server(url: AnyHttpUrl):
-async def connect_to_server(url: str):
+async def connect_to_server(url: AnyHttpUrl):
     """Connect to the server and return a message"""
     try:
         parsed_url = urlparse(url)
@@ -73,8 +61,7 @@ async def connect_to_server(url: str):
 #
 
 # async def send_to_server(url: AnyHttpUrl, msg: str) -> NLIP_Message:
-# async def send_to_server(url: AnyHttpUrl, msg: str) -> dict:
-async def send_to_server(url: str, msg: str) -> dict:
+async def send_to_server(url: AnyHttpUrl, msg: str) -> dict:
     parsed_url = urlparse(url)
     scheme = parsed_url.scheme
     netloc = parsed_url.netloc
