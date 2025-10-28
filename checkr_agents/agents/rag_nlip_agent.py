@@ -34,7 +34,7 @@ COLLECTION_NAME = 'pages'
 #
 
 def find_db_path_in_resources(db:str):   
-    posix_path = resources.files('checkr_agents.resources').joinpath('rag_website_milvus.db')
+    posix_path = resources.files('checkr_agents.resources').joinpath(db)
     rel_path = posix_path.relative_to(os.getcwd())
     logger.info(f"MILVUS DB located in {rel_path}")
     return str(rel_path)
