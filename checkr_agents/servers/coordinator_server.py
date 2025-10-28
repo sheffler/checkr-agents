@@ -44,8 +44,9 @@ class NlipManager(SessionManager):
                msg.add_text(res)
             return msg
         except Exception as e:
-            logger.error(f"Exception {e}")
-            return None
+            logger.error(f"Exception: {e}")
+            error_message = f"Exception: {e}"
+            return NLIP_Factory.create_text(error_message)
         
         
 #

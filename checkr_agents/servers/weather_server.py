@@ -15,6 +15,7 @@ from checkr_agents.http_server.nlip_session_server import NlipSessionServer
 from checkr_agents.http_server.nlip_session_server import SessionManager
 
 from checkr_agents import logger
+from checkr_agents import log_to_console
 import uvicorn
 
 
@@ -44,8 +45,9 @@ class WeatherManager(SessionManager):
                msg.add_text(res)
             return msg
         except Exception as e:
-            logger.error(f"Exception {e}")
-            return None
+            logger.error(f"Exception: {e}")
+            error_message = f"Exception: {e}"
+            return NLIP_Factory.create_text(error_message)
         
         
 #
