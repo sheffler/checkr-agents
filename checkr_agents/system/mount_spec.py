@@ -41,11 +41,11 @@ class MountSpec:
         return f"/tmp/agent-{name}.sock"
 
     async def create_webserver(self, spec):
-        logger.info(f"CREATE_WEBSERVER:{spec}")
+        logger.info(f"MountSpec: CREATE_WEBSERVER:{spec}")
         app = spec[0]
         u = urlparse(spec[1])
 
-        logger.debug(f"SCHEME:{u.scheme}")
+        logger.debug(f"MountSpec: SCHEME:{u.scheme}")
 
         if u.scheme == "http":
 
@@ -54,7 +54,7 @@ class MountSpec:
 
             server_config = uvicorn.Config(app, host="0.0.0.0", port=int(u.port), log_level="info")
             server = uvicorn.Server(server_config)
-            logger.debug(f"SERVER:{server}")
+            logger.debug(f"MountSpec: SERVER:{server}")
             return await server.serve()
 
         elif u.scheme == "unix":
@@ -81,7 +81,7 @@ class MountSpec:
         servers = [ ]
         for spec in self.mount_spec:
             server = self.create_webserver(spec)
-            logger.debug(f"GOT SERVER:{spec} {server}")
+            logger.debug(f"MountSpec: GOT SERVER:{spec} {server}")
             
             # TOM: to re-think this.  The mem part isn't really async at all
             
@@ -90,24 +90,27 @@ class MountSpec:
             else:
                 await server # make it yield up until the None
 
-        done, pending = await asyncio.wait(servers, return_when=asyncio.FIRST_COMPLETED)
-            
-        # done, pending = await asyncio.wait(servers, return_when=asyncio.ALL_COMPLETED)
+        try:
+            done, pending = await asyncio.wait(servers, return_when=asyncio.FIRST_COMPLETED)
+        except asyncio.CancelledError:
+            logger.debug(f"MountSpec: ASYNCIO.WAIT was cancelled")
 
         #
         # ToDo: ^C shuts everything down, and the pending tasks receive asyncio.exception.CancelledError,
-        # which is correct.  It would be nice to find where to catch this and shutdown gracefully.  No luck.
+        # which is correct.
+        #
 
         # ToDo: clean up the socket files
 
-        # print(f"DONE/PENDING:{done}\n===\n{pending}")
-
         logger.debug("================================================================")
-        logger.debug("done")
+        logger.debug("MountSpec: DONE TASKS")
         logger.debug(done)
-        logger.debug("pending")
+        logger.debug("MountSpec: PENDING TASKS")
         logger.debug(pending)
-        # for pending_task in pending:
-        #    pending_task.cancel("Another service died, server is shutting down")
+
+        # Cleanly shut down the pending tasks
+        logger.debug("MountSpec: Cleaning up Pending Tasks")
+        for pending_task in pending:
+            pending_task.cancel("Another service died, server is shutting down")
 
         
