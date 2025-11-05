@@ -1,5 +1,5 @@
 #
-# This Network Of Agents includes Four agents mounted at the following URLs
+# This Network Of Agents includes Five agents mounted at the following URLs
 #
 #    - a user-facing coordinator at http://localhost:8024
 #    - a generic agent at mem://basic/
@@ -15,8 +15,8 @@ import asyncio
 import sys
 import logging
 
-from ..servers.basic_server import app as app1
-from ..servers.weather_server import app as app2
+from ..servers.basic_server import app as basic
+from ..servers.weather_server import app as weath
 from ..servers.coordinator_server import app as coord
 from ..servers.rag_server import app as rag
 from ..servers.wikipedia_server import app as wiki
@@ -37,11 +37,11 @@ if __name__ == "__main__":
     #
     
     mount_spec = [
-        (coord, "http://0.0.0.0:8024/"),
-        (app1, "mem://basic/"),
-        (app2, "mem://weather/"),
-        (rag, "mem://rag/"),
-        (wiki, "mem://wikipedia/"),
+        (coord,   "http://0.0.0.0:8024/"),
+        (basic,   "mem://basic/"),
+        (weath,   "mem://weather/"),
+        (rag,     "unix://rag/"),
+        (wiki,    "mem://wikipedia/"),
     ]
 
     checkr = Checkr()
