@@ -39,6 +39,35 @@ Coordinator NLIP Agents are agents that have *tools* to send and receive message
 The significance of this scheme is that it universally uses the NLIP Agent as the unit of agent composibility independent of whether the NLIP Agent is exposed on the network, or whether it is one of a collection of cooperatively-multithreaded agents residing in one process.  An NLIP Agent has an address, and it may be public or private, but it behaves the same either way.
 
 
+## Launching a System and communicating between agents
+
+A collection of agents is specified with a "Launch Specfication."  An example is shown below.   In it, three servers are created.  Each of which is a FastAPI server "app" serving an NLIP endpoint for an agent.
+
+``` python
+
+agent_server1 = ...
+agent_server2 = ...
+agent_server3 = ...
+
+mount_spec = [
+  (agent_server1, "http://localhost:8024")
+  (agent_server2, "unix://pipename")
+  (agent_server3, "mem://channelname")
+]
+
+```
+
+Agents that have been enabled for NLIP communication will have two "Tools" at their disposal.
+
+- `connect_to_server(url)`
+- `send_to_server(url, message)`
+
+With these two tools a Coordinator Agent can establish a connection to another agent with `connect_to_server(url)` - whether it is local or across the network.  Once a connection is established, the Coordinator Agent can use the `send_to_server(url, message)` tool to send an NLIP message.
+
+The significance of this approach is that helper agents can be dynamically added to a main agent session to help or provide specialized knowlege.  Examples in this project show dialogs that can exercise this functionality.
+
+
+
 ## Checkers and Assertions
 
 All agents in this project derive from the base class `CheckrAgent`.  A CheckrAgent emits events at well-defined points in its lifetime.  For example, some of the key events of handling of a query are shown below.
@@ -51,4 +80,12 @@ All agents in this project derive from the base class `CheckrAgent`.  A CheckrAg
 When launched, an Agent System may start one or more "assertions."  An assertion is a coroutine that verifies a statement of truth about an Agent System.  An assertion may run at a single point in time, or it may consider a sequence of events over time.
 
 
-![Single Agent Schematic](./pics/Slide3.png)
+## A Universal Chat Agent
+
+Agents with NLIP interfaces can be reached by other agents, or by users employing a chat agent.  One such universal chat agent is the [Mach2 Chat App](https://github.com/sheffler/kivy-client-mach2).  A screenshot is shown below.
+
+![Agent-to-Agent](pics/mach2-2.png)
+
+In the figure you can observe the address bar where an agent URL can be entered.  Candidates include network addresses (`http://localhost:8024`) as well as Unix Domain Sockets serving up NLIP Agents (`unix://my-agent`).
+
+You can also observe the dynamic addition of a helper agent to the coordinator agent.
