@@ -58,6 +58,7 @@ direction TB
 
     CheckrAgent <|-- NlipAgent : inheritance
     NlipAgent <|-- WeatherNlipAgent : inheritance
+    NlipAgent <|-- WikipediaNlipAgent : inheritance
     NlipAgent <|-- CoordinatorNlipAgent : inheritance
     NlipAgent <|-- RagNlipAgent : inheritance
     MilvusContextManager <.. RagNlipAgent
