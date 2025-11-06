@@ -16,4 +16,4 @@ Files in this folder define a Python Package.  A brief description of each of th
 
 - [servers](./servers) - this directory is important.  For each agent type in the [agents](./agents) directory, there is a corresponding file here for serving that agent over an HTTP interface with the NLIP protocol.
 
-- [system](./system) - this directory contains the `MountSpec` class, which is responsible for runnning collections of agents together as a group called a "System."  A number of examples show how multi-agent systems are defined and launched.
+- [system](./system) - this directory contains the `MountSpec` class, which is responsible for runnning collections of agents together as a group called a "System."  The `MountSpec` understands how to launch servers at addresses like  `http://localhost:8024`, `unix://agent-one` or `mem://cooperative-agent`.  A number of examples show how multi-agent systems are defined and launched.
