@@ -9,7 +9,7 @@ See the following reference for an early version of this work.
 
 This project introduces two new capabilities.
 
-1.  Composable NLIP Agents.  One executable may now consist of multiple agents that communicate amongst themselves to respond to queries.  An "Agent System" is a collection of Agents with a well-defined mechanism for sending messages to each other via a specified "address."  (See the [./system](./system) directory.)
+1.  Composable NLIP Agents.  One executable may now consist of multiple agents that communicate amongst themselves to respond to queries.  An "Agent System" is a collection of Agents with a well-defined mechanism for sending messages to each other via a specified "address."  (See the [./checkr_agents/system](./checkr_agents/system) directory.)
 
 2.  Checkr Agents.  The lifecycle of an Agent, and its handling of a query, is defined by a series of events.  These events are emitted to a cooperative thread that is running one or more "assertions."  An assertion can verify the correctness of a temporal expression over time, or otherwise check the correctness of the event trace of an Agent in a non-invasive way.
 
