@@ -14,6 +14,8 @@ This directory contains the base agent of this project (the `CheckrAgent`), and 
 
 - `CoordinatorNlipAgent` - this is a very special NLIP agent that has been given tools for connecting to other NLIP agents, establishing their capabilities and sending messages to those agents.  NLIP Agent URLS can include network addresses (`http://my-agent.com`), Unix Domain Socket addresses (`unix://a-different-agent`), or in-memory addresses of agents in the same system (`mem://cooperative-agent`).
 
+    The `CoordinatorNlipAgent` is an example of the **Router** Agent Design Pattern.
+
 
 ``` mermaid
 
