@@ -47,7 +47,8 @@ load_dotenv()
 # MODEL = 'ollama_chat/llama3.2:latest'
 # MODEL = 'ollama_chat/llama3-groq-tool-use:latest'
 # MODEL = "anthropic/claude-3-7-sonnet-20250219"
-MODEL = "cerebras/llama-4-scout-17b-16e-instruct"
+# MODEL = "cerebras/llama-4-scout-17b-16e-instruct"   # Nov 3, 2025: deprecated by cerebras
+MODEL = "cerebras/llama3.3-70b"
 
 #
 # PROMPTS
@@ -71,7 +72,7 @@ class CheckrAgent:
 
     def __init__(self,
                  name: str,
-                 model: str = 'ollama_chat/llama3.2:latest',
+                 model: str = MODEL,
                  instruction: str = None,
                  tools: list[Callable] = [ ]
                  ):
