@@ -39,13 +39,18 @@ if __name__ == "__main__":
     mount_spec = [
         (coord,   "http://0.0.0.0:8024/"),
         (basic,   "mem://basic/"),
-        (weath,   "mem://weather/"),
+        (weath,   "http://0.0.0.0:8022/"),
         (rag,     "unix://rag/"),
         (wiki,    "mem://wikipedia/"),
     ]
 
     checkr = Checkr()
     checkr.load_spec("checkr_agents.assertions.assertion1:mainfn")
+
+    # quiet it for my demo tomorrow
+    checkr.oro.loop().debug = False
+    import oroboro
+    oroboro.traceoff()
 
     ms = MountSpec(mount_spec)
 

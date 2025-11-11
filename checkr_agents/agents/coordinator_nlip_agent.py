@@ -79,7 +79,7 @@ async def send_to_server(url: AnyHttpUrl, msg: str) -> dict:
     return str(nlip_resp.model_dump())
 
 
-NLIP = """
+NLIP_COORDINATOR_PROMPT = """
 You are an advanced NLIP Agent with the capability to speak to other NLIP Agents.
 You have two tools for this purpose:
 - connect_to_server
@@ -103,7 +103,7 @@ class CoordinatorNlipAgent(NlipAgent):
         super().__init__(name, model=model, tools=tools)
 
         self.add_instruction("You are an agent with tools for querying other NLIP Agent Servers")
-        self.add_instruction(NLIP)
+        self.add_instruction(NLIP_COORDINATOR_PROMPT)
 
         if instruction:
             self.add_instruction(instruction)

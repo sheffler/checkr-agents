@@ -13,7 +13,7 @@ This project introduces two new capabilities.
 
 2.  Checkr Agents.  The lifecycle of an Agent, and its handling of a query, is defined by a series of events.  These events are emitted to a cooperative thread that is running one or more "assertions."  An assertion can verify the correctness of a temporal expression over time, or otherwise check the correctness of the event trace of an Agent in a non-invasive way.
 
-## Networks of Agents: the System
+## Networks of Agents: a System
 
 An NLIP Agent exposes its front-end via an HTTP (or HTTPS) server with a designated endoint (`/nlip`) receiving and sending JSON messages of a specified format (NLIP Message Format).  When deployed, an HTTP server is mounted at an address.  Most often, the address is a "network address" at a specific IP address, or a hostname.  The combination of the `scheme` and the address identify the protocol the server understands and where it is listening.
 
