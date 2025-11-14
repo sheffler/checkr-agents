@@ -89,3 +89,43 @@ Agents with NLIP interfaces can be reached by other agents, or by users employin
 In the figure you can observe the address bar where an agent URL can be entered.  Candidates include network addresses (`http://localhost:8024`) as well as Unix Domain Sockets serving up NLIP Agents (`unix://my-agent`).
 
 You can also observe the dynamic addition of a helper agent to the coordinator agent.
+
+
+## Installation and Build
+
+
+We recommend checking out the Oroboro dependency and NLIP-SDK dependency in a directory adjacent to this project's directory.
+
+    $ mkdir git
+	$ cd git
+	$ git clone https://github.com/nlip-project/nlip_sdk
+	$ git clone https://github.com/sheffler/Oroboro
+	$ git clone https://github.com/sheffler/checkr-agents
+	
+
+This project works well with `uv`.
+
+1. Create a virtual environment.
+
+        $ cd git/checkr-agents
+        $ uv venv
+    	$ . .venv/bin/activate
+		
+2. Synchronize the project dependencies
+
+        $ uv sync
+
+
+## Put secrets in the .env file
+
+This project uses LiteLLM to connect to various LLMs.  If using a paid or remote LLM that requires a key, you can place it in the `.env` file in the root of the project.
+
+For example, if you are using Anthropic and Cerebras models, you would copy your API KEYs into it.
+
+    ANTHROPIC_API_KEY=sk-ant-api03-b2R1absad...
+    CEREBRAS_API_KEY=csk-54kvefnr5evdtrk...
+
+
+## Running the Multi-Agent Agent-to-Agent Demonstration
+
+See the complete explanation of a session with detailed screenshots in [./checkr_agents/system](./checkr_agents/system).
