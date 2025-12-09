@@ -17,33 +17,48 @@ from nlip_sdk.nlip import NLIP_Factory, NLIP_Message
 from urllib.parse import urlparse
 
 from pydantic import AnyHttpUrl
+from pydantic import AnyUrl
+from pydantic import validate_call
 
 # map host->session
 sessions = { }
 
 # Use the NLIP logger in this package
-logger = logging.getLogger("NLIP")
+logger = logging.getLogger("checkr")
 
 # MODEL = 'llama3.2:latest'
 # MODEL = 'ollama_chat/llama3.2:latest'
 # MODEL = 'ollama_chat/llama3-groq-tool-use:
 MODEL = "anthropic/claude-3-7-sonnet-20250219"
-# MODEL = "cerebras/llama-4-scout-17b-16e-instruct"
 
+# Cerebras is having trouble generating a send_to_message tool call
+# MODEL = "cerebras/llama-4-scout-17b-16e-instruct"   # Nov 3, 2025: deprecated by cerebras
+# MODEL = "cerebras/llama3.3-70b"
+
+
+
+# Configure Logging for LiteLLM
+import litellm
+litellm._turn_on_debug()
 
 #
 # Make a connection and return a status string
 #
     
-async def connect_to_server(url: AnyHttpUrl):
-    """Connect to the server and return a message"""
+async def OLDconnect_to_server(url: str):
+    """Connect to the server and return a message.
+    Args:
+      url: a url-formatted string
+    """
+     
     try:
         parsed_url = urlparse(url)
         scheme = parsed_url.scheme
         netloc = parsed_url.netloc
     except Exception as e:
-        instance.text = f"Exception: {e}"
-        return
+        text = f"Exception: {e}"
+        logger.error(f"Exception: {e}")
+        return text
 
     # Establish the URL and return a connection message
     await asyncio.sleep(1.0)
@@ -56,12 +71,38 @@ async def connect_to_server(url: AnyHttpUrl):
     logger.info(f"Saved {netloc} with client {client}")
     return f"Connected to {scheme}://{netloc}/"
 
+
 #
-# Send a message to a named host and get a response
+# Make a connection and return a status string.
+#   Use strongly typed url - may be too hard for some LLMs, like Cerebras
 #
 
-# async def send_to_server(url: AnyHttpUrl, msg: str) -> NLIP_Message:
-async def send_to_server(url: AnyHttpUrl, msg: str) -> dict:
+async def connect_to_server(url: AnyUrl):
+    scheme = url.scheme
+    host = url.host
+    port = url.port
+    netloc = url.host if url.port == None else f"{host}:{port}"
+    
+    # Establish the URL and return a connection message
+    await asyncio.sleep(1.0)
+    client = NlipAsyncClient.create_from_url(f"{scheme}://{netloc}/nlip/")
+
+    # Remember this client for this server
+    hashkey = f"{scheme}://{netloc}"
+    sessions[hashkey] = client
+
+    logger.info(f"Saved {netloc} with client {client}")
+    return f"Connected to {scheme}://{netloc}/"
+
+#
+# Send a message to a server
+#
+async def OLDsend_to_server(url: str, msg: str) -> dict:
+    """Connect to the server and send a message.
+    Args:
+      url: a url-formatted string
+      msg: a message string to send to the agent at the url
+    """
     parsed_url = urlparse(url)
     scheme = parsed_url.scheme
     netloc = parsed_url.netloc
@@ -72,6 +113,30 @@ async def send_to_server(url: AnyHttpUrl, msg: str) -> dict:
 
     nlip_message = NLIP_Factory.create_text(msg)
     logger.info(f"Sending message: {msg}")
+    nlip_resp = await client.async_send(nlip_message)
+    logger.info(f"Received: {nlip_resp.model_dump()}")
+    # return nlip_resp.model_dump() # did not work
+    # return nlip_resp.extract_text() # worked
+    return str(nlip_resp.model_dump())
+    
+
+#
+# Send an NLIP message to a server
+#   Use strongly typed url - may be too hard for some LLMs, like Cerebras
+#   LLM must also generate complex structure NLIP message
+#
+async def send_to_server(url: AnyUrl, nlip_message: NLIP_Message) -> dict:
+
+    scheme = url.scheme
+    host = url.host
+    port = url.port
+    netloc = url.host if url.port == None else f"{host}:{port}"
+
+    # Look up the client for this server
+    hashkey = f"{scheme}://{netloc}" # netloc includes host and port, if specified
+    client = sessions[hashkey]
+
+    logger.info(f"Sending message: {nlip_message}")
     nlip_resp = await client.async_send(nlip_message)
     logger.info(f"Received: {nlip_resp.model_dump()}")
     # return nlip_resp.model_dump() # did not work

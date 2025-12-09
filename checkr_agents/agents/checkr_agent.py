@@ -24,10 +24,18 @@ from checkr_agents import logger
 from pydantic import TypeAdapter
 import json
 
+import jsonref
+
 # Pydantic v2 is deprecating schema_of.  This is how to do it in Pydantic v3.
 def schema_of(thing):
     adapter = TypeAdapter(thing)
-    return adapter.json_schema()
+    # IMPORTANT: jsonref needed.  Many LLMs cannot handle $ref, Claude included.
+    # return adapter.json_schema()
+    return jsonref.replace_refs(adapter.json_schema())
+
+# 2025-12-05 For tool hydration
+import inspect
+from typing import Dict, Any, get_type_hints, get_origin, get_args
 
 from litellm import completion
 from dotenv import load_dotenv
@@ -35,6 +43,8 @@ from dotenv import load_dotenv
 # Configure Logging for LiteLLM
 import litellm
 # litellm._turn_on_debug()
+
+from pprint import pformat
 
 # Load .env for vars like ANTHROPIC_API_KEY, etc
 load_dotenv()
@@ -115,6 +125,8 @@ class CheckrAgent:
         # build the initial tools from a list of python callables
         for fn in tools:
             self.add_tool(fn)
+
+        # logger.info(f"TOOLSINITIAL:{pformat(self.tools)}")
     
     #
     # relative time since agent birth
@@ -189,6 +201,40 @@ class CheckrAgent:
             
 
     #
+    # Helper: for argument hydration
+    #
+
+    def _convert_arg(self, value: Any, expected_type: type) -> Any:
+        """Convert a JSON value to the expected Python type."""
+    
+        # Handle None
+        if value is None:
+            return None
+    
+        # If already correct type, return as-is
+        if isinstance(value, expected_type):
+            return value
+    
+        # Handle List[T] - generic list types
+        origin = get_origin(expected_type)
+        if origin is list:
+            item_type = get_args(expected_type)[0]
+            return [self._convert_arg(item, item_type) for item in value]
+    
+        # Handle dataclasses, Pydantic models, or custom classes
+        if isinstance(value, dict):
+            # Try instantiating the class from the dict
+            try:
+                # Works for dataclasses and Pydantic models
+                return expected_type(**value)
+            except TypeError as e:
+                # Fallback for classes without keyword init
+                return expected_type(value)
+    
+        # Primitive types - let Python handle conversion
+        return expected_type(value)
+
+    #
     # Helper for main loop
     #
 
@@ -198,11 +244,37 @@ class CheckrAgent:
         """
         isFound = False
 
+        logger.info(f"CALL_TOOL:{name} args:{args}")
+
         fn = self.fnmap[name]
+
+        # Get the function's type hints
+        type_hints = get_type_hints(fn)
+
+
         if fn:
             isFound = True
             logger.info(f"Invoking tool:{name} with args:{args}")
-            result = await fn(**args)
+
+            # Convert each argument to its expected type
+            converted_args = {}
+            for arg_name, arg_value in args.items():
+                if arg_name in type_hints:
+                    expected_type = type_hints[arg_name]
+                    converted_args[arg_name] = self._convert_arg(arg_value, expected_type)
+                else:
+                    converted_args[arg_name] = arg_value
+
+            # Look at this if tool arguments are not converted well
+            # logger.info(f"ConvertedArgs: {pformat(converted_args)}")
+
+            # result = await fn(**args)
+            try:
+                result = await fn(**converted_args)
+            except Exception as e:
+                logger.error(f"TOOL EXCEPTION:{e}")
+                raise
+
             logger.info(f"Got tool result:{result}")
 
             self.final_text.append(f"Calling tool:{name} with args:{args}")
