@@ -16,7 +16,8 @@ USER_AGENT = "wikipedia-app/1.0"
 
 
 #MODEL = 'ollama_chat/llama3.2:latest'
-MODEL = "anthropic/claude-3-7-sonnet-20250219"
+# MODEL = "anthropic/claude-3-7-sonnet-20250219"
+MODEL = "cerebras/llama3.3-70b"   # 2025-12-09 Cerebras is fine calling this tool
 
 async def make_wikipedia_request(url: str) -> dict[str, Any] | None:
     """Make a request to the Wikipedia API with proper error handling."""
@@ -26,17 +27,17 @@ async def make_wikipedia_request(url: str) -> dict[str, Any] | None:
             response = await client.get(url, headers=headers, timeout=30.0)
             response.raise_for_status()
             return response.json()
-        except Exception:
-            return None
+        except Exception as e:
+            return f"WikipediaException:{e}"
 
 
 # TOOL definition
 async def get_wikipedia_page_by_title(title: str) -> Any:
     """ Get wikipedia page summary given the page title
-
     Args:
         title: The title of the Wikipedia article
     """
+
     url = WIKIPEDIA_API_BASE.format(title=title)
     data = await make_wikipedia_request(url)
 
