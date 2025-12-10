@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "fastapi>=0.118.0",
+    "jsonref>=1.1.0",
     "litellm>=1.77.5",
     "nlip-sdk",
     "oroboro",
