@@ -17,6 +17,7 @@ from checkr_agents.http_server.nlip_session_server import SessionManager
 from checkr_agents import logger, log_to_console
 import uvicorn
 
+from pprint import pformat
 
 #
 # Define a session manager that launches a new BasicAgent for each session
@@ -34,7 +35,7 @@ class NlipManager(SessionManager):
     async def process_nlip(self, msg: NLIP_Message) -> NLIP_Message:
 
         # concatenate all of the "text" parts
-        text = msg.extract_text()
+        text = msg.extract_text(language=None)
 
         try:
             results = await self.myAgent.process_query(text)

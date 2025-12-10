@@ -33,7 +33,7 @@ class BasicManager(SessionManager):
     async def process_nlip(self, msg: NLIP_Message) -> NLIP_Message:
 
         # concatenate all of the "text" parts
-        text = msg.extract_text()
+        text = msg.extract_text(language=None)
 
         try:
             results = await self.myAgent.process_query(text)
