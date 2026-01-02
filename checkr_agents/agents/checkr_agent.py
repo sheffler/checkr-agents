@@ -34,7 +34,10 @@ from dotenv import load_dotenv
 
 # Configure Logging for LiteLLM
 import litellm
-# litellm._turn_on_debug()
+litellm._turn_on_debug()
+
+# Configure Open-Telemetry for LangFuse
+# litellm.callbacks = ["langfuse_otel"]
 
 # Load .env for vars like ANTHROPIC_API_KEY, etc
 load_dotenv()
