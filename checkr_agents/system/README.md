@@ -99,7 +99,7 @@ The first thing we will do is use the [Mach2](https://github.com/sheffler/kivy-c
 
 ### Ask the Coordinator about its NLIP Capabilities
 
-Now, recall that all of the agents in the system derive from the class `NlipAgent`.  An `NlipAgent` has an instruction that teaches it how to respond to a request to describe its "NLIP Capabilities."  We can try this ourselves to see what's its capabilties are.
+All of the agents in the agent system derive from the class `NlipAgent`.  An `NlipAgent` has an instruction that teaches it how to respond to a request to describe its "NLIP Capabilities."  We can try this ourselves to see what's its capabilties are.
 
 From its response, we can see that the agent is named "Margaret" and that it has the capability to connect to other agents!  This is exactly what we expect.  The coordinator agent can use *tools* to connect to other NLIP agents.
 
@@ -113,7 +113,7 @@ Now let's ask the Coordinator Agent to connect to an agent by its URI.  We know 
 
 What happens next is interesting.  The Coordinator Agent uses its `connect_to_server()` tool to connect to the remote agent.  Once it connects, the Coordinator Agent then queries to find out the remote agent's "NLIP Capabilities."  It does this by using the `send_to_server()` tool to send the message to the URI.  The Coordinator Agent has been taught this two-step exchange by the instruction given to it.  (See the `NLIP_COORDINATOR_PROMPT` string in `coordinator_nlip_agent.py` for details.)
 
-From the response, we can see that the remote agent is named "Weather" and that it has capabilities to get a weather forecast by coordinators, or to get a weather alert by state abbreviation.  So far so good.
+From the response, we can see that the remote agent is named "Weather" and that it has capabilities to get a weather forecast by coordinates, or to get a weather alert by state abbreviation.  So far so good.
 
 Since this information is recorded in the message history of the Coordinator Agent, it will be able to look up the URI of this remote agent by its name ("Weather") or by its capabilities.
 
@@ -135,13 +135,16 @@ Once again, remember that this information is in the message history of the Coor
 
 ### Connect to the Wikipedia Agent
 
-And let's dynamically add a third agent to the session.  This time we will add the Wikipedia agent that has a URI of `mem://wikipedia/`, and it *internal* to the agent system.  The Coordinator Agent asks about the remote agent's "NLIP Capabilities" and finds out its name and the fact that it can retrieve Wikipedia articles by page name.
+And let's dynamically add a third agent to the session.  This time we will add the Wikipedia agent that has a URI of `mem://wikipedia/`, which is *internal* to the agent system.  But as far as the Coordinator Agent is concerned, this new agent simply has a URI that works with `connect_to_server` and `send_to_server`.
 
-At this point, our Coordinator Agent has three assistant agents: Weather, McLarenLabs and Wikipedia.  If the Coordinator Agent does not know an answer but determines that an assistant agent can help, it can send a message to that agent using its `send_to_server` too.
+The Coordinator Agent asks about the remote agent's "NLIP Capabilities" and finds out its name and the fact that it can retrieve Wikipedia articles by page name.
 
-### Exercise the specialized agents
+At this point, our Coordinator Agent has three assistant agents: Weather, McLarenLabs and Wikipedia.  If the Coordinator Agent does not know an answer but determines that an assistant agent can help, it can send a message to that agent using its `send_to_server` tool.
 
 ![Multi Agent Add Wikipedia](./pics/multi-agent-add-wikipedia.png)
+
+
+### Exercise the specialized agents
 
 Now let's ask the Coordinator Agent what it knows about Rome.  We are interested in learning more about Rome, Italy.  To answer this question the Coordinator Agent need only determine if there is an assistant that can help, and then formulate a question for that helper agent.
 
@@ -175,3 +178,12 @@ Simply enter the URI in the address bar and press return.  `Mach2` is now connec
 The RAG agent also has a URI that can be reached from other processes on the same computer.   Its URI was set up as `unix://rag/.`  Enter this in the address bar of `Mach2` and you can interact with that agent directly.
 
 ![Multi Agent Use Mache2 to Connect to RAG Directly](./pics/multi-agent-use-mach2-to-connect-to-rag-directly.png)
+
+
+## Summary
+
+This demonstration and discussion shows the flexibility with which NLIP Agent Servers can be combined and composed.  For the NLIP Coordinator Agent, the URI is the means by which *any* NLIP Agent **anywhere** is addressed.  It could be in the same process, on the same machine, or somewhere out on the internet.
+
+The `MountSpec` facility is a convenient way to start up a collection of NLIP Agent Servers with an easy way to assign their URI.  It then becomes a deployment decision whether an agent is mounted at a completely private address (`mem://`) or a public address (`https://`), but the application logic regarding connecting-to and interacting-with that agent remains the same.
+
+It is also worth point out how the universal NLIP Client (`Mach2`) can be used to interact with any of these agent servers over both `http://` and `unix://` schemes.
