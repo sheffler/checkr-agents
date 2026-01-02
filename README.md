@@ -124,6 +124,13 @@ For example, if you are using Anthropic and Cerebras models, you would copy your
 
     ANTHROPIC_API_KEY=sk-ant-api03-b2R1absad...
     CEREBRAS_API_KEY=csk-54kvefnr5evdtrk...
+	
+If you have enabled LANGFUSE integration, put your LANGFUSE environment variables in it.
+
+	LANGFUSE_OTEL_HOST="https://us.cloud.langfuse.com"
+	LANGFUSE_PUBLIC_KEY=pk-lf-5fd47dda-7f5e-4a1c-0000-c5960234d2b2
+	LANGFUSE_SECRET_KEY=sk-lf-fac0f7e0-fc19-4015-2222-b950128916e9
+
 
 
 ## Running the Multi-Agent Agent-to-Agent Demonstration
