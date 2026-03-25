@@ -49,16 +49,20 @@ load_dotenv()
 # MODEL = 'llama3.2:latest'
 # MODEL = 'ollama_chat/llama3.2:latest'
 # MODEL = 'ollama_chat/llama3-groq-tool-use:latest'
-# MODEL = "anthropic/claude-3-7-sonnet-20250219"
+MODEL = "anthropic/claude-sonnet-4-6"
 # MODEL = "cerebras/llama-4-scout-17b-16e-instruct"   # Nov 3, 2025: deprecated by cerebras
-MODEL = "cerebras/llama3.3-70b"
+# MODEL = "cerebras/llama3.3-70b"
 
 #
 # PROMPTS
 #
 
 TOOLS_INSTRUCTION = """
-You are an agent with tools.  When calling a tool, make sure to match the type signature of the tool.
+You are an agent with tools. Think step by step before acting.
+
+For each step, reason about what you know and what you need to find out (Thought),
+then call a tool if needed (Action), and incorporate the result (Observation).
+When you have enough information, provide a final answer without calling any tools.
 """
 
 class CheckrAgent:
@@ -238,10 +242,10 @@ class CheckrAgent:
     # Record the response message appropriately in both self.messages and self.final_response
     #
     
-    def _handle_response(self, response_message):
+    def _handle_response(self, response_message, is_intermediate: bool = False):
 
         # to be shown to the user at the end of this turn
-        if response_message.content is not None:
+        if response_message.content is not None and not is_intermediate:
             self.final_text.append(response_message.content)
 
         tool_calls = response_message.tool_calls
@@ -290,7 +294,7 @@ class CheckrAgent:
             sys.exit(1)
 
         # Save the response
-        self._handle_response(response_message)
+        self._handle_response(response_message, is_intermediate=bool(response_message.tool_calls))
 
         # attach raw response
         self.checkr.post_and_run(self._trel(), self.on_query_analyzed, response_message)
@@ -323,7 +327,8 @@ class CheckrAgent:
             response_message = response.choices[0].message
 
             # Save the response in the converation and add it to the text result
-            self._handle_response(response_message)
+            # Treat it as an intermediate ReAct thinking message if there are tool calls
+            self._handle_response(response_message, is_intermediate=bool(response_message.tool_calls))
 
             # attach response message
             self.checkr.post_and_run(self._trel(), self.on_tool_calls_analyzed, response_message)
